@@ -78,7 +78,7 @@ int main(void)
     input_file.close();
 
     filter_grayscale(pixels, width, height, comp);
-    filter_inverted(pixels, width, height, comp);
+    //filter_inverted(pixels, width, height, comp);
 
     std::cout
         << "P3" << std::endl
