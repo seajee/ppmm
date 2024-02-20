@@ -4,8 +4,8 @@ CXXFLAGS=-Wall -Wextra
 all: ppmm filter random convert_to_ppm
 probe: filter random convert_to_ppm
 
-ppmm: ppmm.cpp
-	$(CXX) $(CXXFLAGS) -o ppmm ppmm.cpp
+ppmm: main.cpp ppmm.cpp
+	$(CXX) $(CXXFLAGS) -o ppmm main.cpp ppmm.cpp
 
 filter: probe/filter.cpp
 	$(CXX) $(CXXFLAGS) -o filter probe/filter.cpp
