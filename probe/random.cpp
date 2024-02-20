@@ -24,6 +24,8 @@ void generate_random_image(int width, int height)
 
 int main(void)
 {
+    srand(time(NULL));
+
     generate_random_image(3, 3);
 
     return 0;
