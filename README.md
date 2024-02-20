@@ -15,6 +15,7 @@ $ make
 ```bash
 $ ./ppmm g cat.ppm cat_bw.ppm
 $ ./ppmm i cat.ppm cat_inv.ppm
+$ ./ppmm m cat.ppm cat_mul.ppm
 ```
 
 ![cat](assets/cat.jpg)
