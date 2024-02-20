@@ -13,8 +13,8 @@ $ make
 ## Example
 
 ```bash
-$ ./filter > cat_bw.ppm
-$ ./filter > cat_inv.ppm
+$ ./ppmm g cat.ppm cat_bw.ppm
+$ ./ppmm i cat.ppm cat_inv.ppm
 ```
 
 ![cat](assets/cat.jpg)

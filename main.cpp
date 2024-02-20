@@ -2,28 +2,42 @@
 
 #include "ppmm.h"
 
-int main(void)
+int main(int argc, char **argv)
 {
     using namespace ppmm;
 
-    Image img("cat.ppm");
+    // Check program usage
+    if (argc < 3) {
+        std::cerr
+            << "ERROR: Incorrect usage" << std::endl
+            << "Usage: " << argv[0] << " g/i <file> <output>" << std::endl;
+        return 1;
+    }
+
+    const char *parameter = argv[1];
+    const char *input_filepath = argv[2];
+    const char *output_filepath = argv[3];
+
+    // Open image file
+    Image img(input_filepath);
     if (!img.IsOpen()) {
-        std::cerr << "ERROR: Could not open file" << std::endl;
+        std::cerr << "ERROR: Could not open file" << input_filepath << std::endl;
         return 1;
     }
 
+    // Create a filter for the image
     Filter filter(img);
-    filter.Grayscale();
 
-    if (!img.WriteToFile("cat_grayscale.ppm")) {
-        std::cerr << "ERROR: Could not write file" << std::endl;
-        return 1;
+    // Apply the correct filter
+    if (*parameter == 'g') {
+        filter.Grayscale();
+    } else if (*parameter == 'i') {
+        filter.Inverted();
     }
 
-    filter.Inverted();
-
-    if (!img.WriteToFile("cat_inverted.ppm")) {
-        std::cerr << "ERROR: Could not write file" << std::endl;
+    // Finally write the manipulated image to a file
+    if (!img.WriteToFile(output_filepath)) {
+        std::cerr << "ERROR: Could not write to " << output_filepath << std::endl;
         return 1;
     }
 
