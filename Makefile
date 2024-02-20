@@ -2,18 +2,19 @@ CXX=g++
 CXXFLAGS=-Wall -Wextra
 
 all: ppmm filter random convert_to_ppm
+probe: filter random convert_to_ppm
 
 ppmm: ppmm.cpp
 	$(CXX) $(CXXFLAGS) -o ppmm ppmm.cpp
 
-filter: filter.cpp
-	$(CXX) $(CXXFLAGS) -o filter filter.cpp
+filter: probe/filter.cpp
+	$(CXX) $(CXXFLAGS) -o filter probe/filter.cpp
 
-random: random.cpp
-	$(CXX) $(CXXFLAGS) -o random random.cpp
+random: probe/random.cpp
+	$(CXX) $(CXXFLAGS) -o random probe/random.cpp
 
-convert_to_ppm: convert_to_ppm.cpp
-	$(CXX) $(CXXFLAGS) -o convert_to_ppm convert_to_ppm.cpp
+convert_to_ppm: probe/convert_to_ppm.cpp
+	$(CXX) $(CXXFLAGS) -o convert_to_ppm probe/convert_to_ppm.cpp
 
 clean:
 	rm -rf ppmm
