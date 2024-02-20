@@ -10,7 +10,7 @@ int main(int argc, char **argv)
     if (argc < 3) {
         std::cerr
             << "ERROR: Incorrect usage" << std::endl
-            << "Usage: " << argv[0] << " g/i <file> <output>" << std::endl;
+            << "Usage: " << argv[0] << " g/i/m <file> <output>" << std::endl;
         return 1;
     }
 
@@ -33,6 +33,8 @@ int main(int argc, char **argv)
         filter.Grayscale();
     } else if (*parameter == 'i') {
         filter.Inverted();
+    } else if (*parameter == 'm') {
+        filter.Multiply(2.0);
     }
 
     // Finally write the manipulated image to a file

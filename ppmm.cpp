@@ -145,3 +145,20 @@ void ppmm::Filter::Inverted(void)
         m_Image[i + 2] = 255 - b;
     }
 }
+
+void ppmm::Filter::Multiply(float factor)
+{
+    for (int i = 0; i < m_ImageSize; i += m_ImageFormat) {
+        float rl = (float)m_Image[i + 0] / 255.0;
+        float gl = (float)m_Image[i + 1] / 255.0;
+        float bl = (float)m_Image[i + 2] / 255.0;
+
+        rl *= factor; if (rl > 1.0) rl = 1.0;
+        gl *= factor; if (gl > 1.0) gl = 1.0;
+        bl *= factor; if (bl > 1.0) bl = 1.0;
+
+        m_Image[i + 0] = (unsigned char)(rl*255);
+        m_Image[i + 1] = (unsigned char)(gl*255);
+        m_Image[i + 2] = (unsigned char)(bl*255);
+    }
+}
