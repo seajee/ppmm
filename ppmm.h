@@ -40,6 +40,7 @@ namespace ppmm
         void Grayscale(void);
         void Inverted(void);
         void Multiply(float factor);
+        void Multiply(float r, float g, float b);
 
     private:
         Image &m_Image;

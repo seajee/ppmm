@@ -10,11 +10,15 @@ int main(int argc, char **argv)
     if (argc < 3) {
         std::cerr
             << "ERROR: Incorrect usage" << std::endl
-            << "Usage: " << argv[0] << " g/i/m <file> <output>" << std::endl;
+            << "Usage: " << argv[0] << " g/i/m/c <file> <output>" << std::endl
+            << "  g: grayscale" << std::endl
+            << "  i: inverted" << std::endl
+            << "  m: multiply by factor" << std::endl
+            << "  c: multiply by color" << std::endl;
         return 1;
     }
 
-    const char *parameter = argv[1];
+    const char parameter = *argv[1];
     const char *input_filepath = argv[2];
     const char *output_filepath = argv[3];
 
@@ -29,12 +33,22 @@ int main(int argc, char **argv)
     Filter filter(img);
 
     // Apply the correct filter
-    if (*parameter == 'g') {
+    switch (parameter) {
+    case 'g':
         filter.Grayscale();
-    } else if (*parameter == 'i') {
+        break;
+    case 'i':
         filter.Inverted();
-    } else if (*parameter == 'm') {
+        break;
+    case 'm':
         filter.Multiply(2.0);
+        break;
+    case 'c':
+        filter.Multiply(0.2, 0.5, 0.9);
+        break;
+    default:
+        std::cerr << "ERROR: parameter not recognized" << std::endl;
+        return 1;
     }
 
     // Finally write the manipulated image to a file
