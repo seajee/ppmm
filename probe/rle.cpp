@@ -25,8 +25,8 @@ void blank_image(int width, int height, int format)
 
 int main(void)
 {
-    //blank_image(250, 250, 3);
-    //return 0;
+    blank_image(250, 250, 3);
+    return 0;
 
     //Image img("blank.ppm");
     Image img("random.ppm");
