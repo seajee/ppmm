@@ -1,6 +1,6 @@
 # ppmm
 
-Image manipulation using the Portable PixMap format.
+Image manipulation and compression using the Portable PixMap format.
 
 ## Quick start
 
