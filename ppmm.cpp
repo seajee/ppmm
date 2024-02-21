@@ -4,6 +4,7 @@
 #include <fstream>
 #include <string>
 #include <cstdlib>
+#include <cstring>
 
 ppmm::Image::Image(const std::string &filepath)
 {
@@ -32,8 +33,7 @@ ppmm::Image::Image(const std::string &filepath)
     m_Size = m_Width * m_Height * m_Format;
 
     // Allocate memory for image data
-    m_Data = (unsigned char*)malloc(
-            sizeof(unsigned char) * m_Size);
+    m_Data = (unsigned char*)malloc(sizeof(unsigned char) * m_Size);
     if (m_Data == NULL) {
         return;
     }
@@ -55,9 +55,54 @@ ppmm::Image::Image(const std::string &filepath)
     ifs.close();
 }
 
+ppmm::Image::Image(int width, int height, int format) :
+    m_Width(width), m_Height(height), m_Format(format)
+{
+    m_Size = width * height * format;
+
+    // Allocate memory for image data
+    m_Data = (unsigned char*)malloc(sizeof(unsigned char) * m_Size);
+    if (m_Data == NULL) {
+        return;
+    }
+
+    // Fill image data with zeros
+    memset(m_Data, 0, m_Size);
+}
+
+ppmm::Image::Image()
+{
+}
+
 ppmm::Image::~Image()
 {
     free(m_Data);
+}
+
+bool ppmm::Image::Initialize(int width, int height, int format)
+{
+    // Reset member variables
+    m_Width = width;
+    m_Height = height;
+    m_Format = format;
+
+    // Free memory for reinitialization
+    if (m_Data != NULL) {
+        free(m_Data);
+    }
+
+    m_Size = width * height * format;
+
+    // Allocate memory for image data
+    m_Data = (unsigned char*)malloc(sizeof(unsigned char) * m_Size);
+    if (m_Data == NULL) {
+        return false;
+    }
+
+    // Fill image data with zeros
+    memset(m_Data, 0, m_Size);
+
+    return true;
 }
 
 bool ppmm::Image::IsOpen(void)
@@ -94,11 +139,6 @@ bool ppmm::Image::WriteToFile(const std::string &filepath)
     ofs.close();
 
     return true;
-}
-
-bool ppmm::Image::Write(void)
-{
-    return WriteToFile(m_FilePath);
 }
 
 unsigned char& ppmm::Image::operator[](size_t index)
@@ -178,4 +218,111 @@ void ppmm::Filter::Multiply(float r, float g, float b)
         m_Image[i + 1] = (unsigned char)(gl*255);
         m_Image[i + 2] = (unsigned char)(bl*255);
     }
+}
+
+bool ppmm::RLECompression::WriteToFile(Image &img, const std::string &filepath)
+{
+    // Check if image is valid
+    if (!img.IsOpen()) {
+        return false;
+    }
+
+    // Open output file stream
+    std::ofstream ofs(filepath);
+    if (!ofs.is_open()) {
+        return false;
+    }
+
+    int width = img.GetWidth();
+    int format = img.GetFormat();
+
+    // Write PPM header
+    ofs << "P3" << std::endl
+        << width << " " << img.GetHeight() << std::endl
+        << "255" << std::endl;
+
+    // Perform RLE
+    unsigned char cur = img[0];
+    int count = 1;
+
+    for (int i = 1; i < img.GetSize(); ++i) {
+        bool space = false;
+
+        if (img[i] != cur) {
+            ofs << count << " " << (int)cur;
+            cur = img[i];
+            count = 1;
+
+            // For every row of the image write a break line
+            if (i % (width*format) == width*format - 1) {
+                ofs << std::endl;
+            }
+
+            space = true;
+        } else {
+            ++count;
+        }
+
+        // Write spaces only when dumping rle sequences
+        if (space) {
+            ofs << " ";
+        }
+    }
+
+    ofs << count << " " << (int)cur;
+
+    return true;
+}
+
+bool ppmm::RLECompression::ReadFromFile(const std::string &filepath, Image &img)
+{
+    // Open input file stream
+    std::ifstream ifs(filepath);
+    if (!ifs.is_open()) {
+        return false;
+    }
+
+    // Check PPM magic
+    char magic_cstr[3] = { 0 };
+    ifs.read(magic_cstr, 2);
+    std::string magic(magic_cstr);
+
+    if (magic != "P3") {
+        return false;
+    }
+
+    int width;
+    int height;
+    int depth;
+
+    // Read header
+    ifs >> width;
+    ifs >> height;
+    ifs >> depth;
+
+    (void)depth;
+
+    // Reinitialize image
+    if (!img.Initialize(width, height, 3)) {
+        return false;
+    }
+
+    // Read image data while decompressing it
+    int count;
+    int ptr = 0;
+
+    while (ifs >> count) {
+        int which;
+        ifs >> which;
+
+        for (int i = 0; i < count; ++i) {
+            img[ptr] = (unsigned char)which;
+            ++ptr;
+        }
+    }
+
+    // Close the file stream
+    ifs.close();
+
+    return true;
 }

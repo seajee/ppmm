@@ -8,11 +8,13 @@ namespace ppmm
     {
     public:
         Image(const std::string &filepath);
+        Image(int width, int height, int format);
+        Image();
         ~Image();
 
+        bool Initialize(int width, int height, int format);
         bool IsOpen(void);
         bool WriteToFile(const std::string &filepath);
-        bool Write(void);
 
         unsigned char& operator[](size_t index);
 
@@ -46,5 +48,12 @@ namespace ppmm
         Image &m_Image;
         int m_ImageSize = 0;
         int m_ImageFormat = 0;
+    };
+
+    class RLECompression
+    {
+    public:
+        bool WriteToFile(Image &img, const std::string &filepath);
+        bool ReadFromFile(const std::string &filepath, Image &img);
     };
 }
