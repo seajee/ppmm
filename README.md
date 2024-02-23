@@ -1,4 +1,4 @@
-# ppmm
+# ppmm (Portable PixMap Manipulation)
 
 Image manipulation and compression using the Portable PixMap format.
 
