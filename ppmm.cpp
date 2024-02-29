@@ -55,10 +55,10 @@ ppmm::Image::Image(const std::string &filepath)
     ifs.close();
 }
 
-ppmm::Image::Image(int width, int height, int format) :
-    m_Width(width), m_Height(height), m_Format(format)
+ppmm::Image::Image(int width, int height, int depth) :
+    m_Width(width), m_Height(height), m_Depth(depth)
 {
-    m_Size = width * height * format;
+    m_Size = width * height * m_Format;
 
     // Allocate memory for image data
     m_Data = (unsigned char*)malloc(sizeof(unsigned char) * m_Size);
@@ -79,19 +79,19 @@ ppmm::Image::~Image()
     free(m_Data);
 }
 
-bool ppmm::Image::Initialize(int width, int height, int format)
+bool ppmm::Image::Initialize(int width, int height, int depth)
 {
     // Reset member variables
     m_Width = width;
     m_Height = height;
-    m_Format = format;
+    m_Depth = depth;
 
     // Free memory for reinitialization
     if (m_Data != NULL) {
         free(m_Data);
     }
 
-    m_Size = width * height * format;
+    m_Size = width * height * m_Format;
 
     // Allocate memory for image data
     m_Data = (unsigned char*)malloc(sizeof(unsigned char) * m_Size);
@@ -144,6 +144,17 @@ bool ppmm::Image::WriteToFile(const std::string &filepath)
 unsigned char& ppmm::Image::operator[](size_t index)
 {
     return m_Data[index];
+}
+
+ppmm::Image& ppmm::Image::operator<<(unsigned char data)
+{
+    m_Data[m_Seek++] = data;
+    return *this;
+}
+
+void ppmm::Image::Seek(size_t index)
+{
+    m_Seek = index;
 }
 
 int ppmm::Image::GetWidth(void)  { return m_Width;  }
