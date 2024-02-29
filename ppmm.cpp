@@ -148,7 +148,7 @@ void ppmm::Image::Seek(size_t index)
 }
 
 int ppmm::Image::GetWidth(void)  { return m_Width;  }
-int ppmm::Image::GetHeight(void) { return m_Width;  }
+int ppmm::Image::GetHeight(void) { return m_Height;  }
 int ppmm::Image::GetFormat(void) { return m_Format; }
 int ppmm::Image::GetSize(void)   { return m_Size;   }
 int ppmm::Image::GetDepth(void)  { return m_Depth;  }
