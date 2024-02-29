@@ -55,19 +55,9 @@ ppmm::Image::Image(const std::string &filepath)
     ifs.close();
 }
 
-ppmm::Image::Image(int width, int height, int depth) :
-    m_Width(width), m_Height(height), m_Depth(depth)
+ppmm::Image::Image(int width, int height, int depth)
 {
-    m_Size = width * height * m_Format;
-
-    // Allocate memory for image data
-    m_Data = (unsigned char*)malloc(sizeof(unsigned char) * m_Size);
-    if (m_Data == NULL) {
-        return;
-    }
-
-    // Fill image data with zeros
-    memset(m_Data, 0, m_Size);
+    Initialize(width, height, depth);
 }
 
 ppmm::Image::Image()
