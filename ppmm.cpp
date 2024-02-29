@@ -302,10 +302,8 @@ bool ppmm::RLECompression::ReadFromFile(const std::string &filepath, Image &img)
     ifs >> height;
     ifs >> depth;
 
-    (void)depth;
-
     // Reinitialize image
-    if (!img.Initialize(width, height, 3)) {
+    if (!img.Initialize(width, height, depth)) {
         return false;
     }
 
