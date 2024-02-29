@@ -22,15 +22,16 @@ namespace ppmm
         int GetHeight(void);
         int GetFormat(void);
         int GetSize(void);
+        int GetDepth(void);
 
     private:
         std::string m_FilePath;
 
         unsigned char *m_Data = NULL;
-        int m_Size = 0;
         int m_Width = 0;
         int m_Height = 0;
         int m_Format = 3;
+        int m_Size = 0;
         int m_Depth = 0;
     };
 
@@ -48,6 +49,7 @@ namespace ppmm
         Image &m_Image;
         int m_ImageSize = 0;
         int m_ImageFormat = 0;
+        int m_ImageDepth = 0;
     };
 
     class RLECompression

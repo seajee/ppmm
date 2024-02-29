@@ -121,10 +121,10 @@ bool ppmm::Image::WriteToFile(const std::string &filepath)
     // Write PPM header
     ofs << "P3" << std::endl
         << m_Width << " " << m_Height << std::endl
-        << "255" << std::endl;
+        << m_Depth << std::endl;
 
     // Write image data
-    for (int i = 0; i < m_Width*m_Height*m_Format; ++i) {
+    for (int i = 0; i < m_Size; ++i) {
         ofs << (int)m_Data[i];
 
         // For every row of the image write a line break
@@ -150,26 +150,28 @@ int ppmm::Image::GetWidth(void)  { return m_Width;  }
 int ppmm::Image::GetHeight(void) { return m_Width;  }
 int ppmm::Image::GetFormat(void) { return m_Format; }
 int ppmm::Image::GetSize(void)   { return m_Size;   }
+int ppmm::Image::GetDepth(void)  { return m_Depth;  }
 
 ppmm::Filter::Filter(Image &img) :
     m_Image(img)
 {
     m_ImageSize = m_Image.GetSize();
     m_ImageFormat = m_Image.GetFormat();
+    m_ImageDepth = m_Image.GetDepth();
 }
 
 void ppmm::Filter::Grayscale(void)
 {
     for (int i = 0; i < m_ImageSize; i += m_ImageFormat) {
-        float rl = (float)m_Image[i + 0] / 255.0;
-        float gl = (float)m_Image[i + 1] / 255.0;
-        float bl = (float)m_Image[i + 2] / 255.0;
+        float rl = (float)m_Image[i + 0] / m_ImageDepth;
+        float gl = (float)m_Image[i + 1] / m_ImageDepth;
+        float bl = (float)m_Image[i + 2] / m_ImageDepth;
 
         float y = 0.2126*rl + 0.7152*gl + 0.0722*bl;
 
-        m_Image[i + 0] = (unsigned char)(y*255);
-        m_Image[i + 1] = (unsigned char)(y*255);
-        m_Image[i + 2] = (unsigned char)(y*255);
+        m_Image[i + 0] = (unsigned char)(y*m_ImageDepth);
+        m_Image[i + 1] = (unsigned char)(y*m_ImageDepth);
+        m_Image[i + 2] = (unsigned char)(y*m_ImageDepth);
     }
 }
 
@@ -180,43 +182,43 @@ void ppmm::Filter::Inverted(void)
         unsigned char g = m_Image[i + 1];
         unsigned char b = m_Image[i + 2];
 
-        m_Image[i + 0] = 255 - r;
-        m_Image[i + 1] = 255 - g;
-        m_Image[i + 2] = 255 - b;
+        m_Image[i + 0] = m_ImageDepth - r;
+        m_Image[i + 1] = m_ImageDepth - g;
+        m_Image[i + 2] = m_ImageDepth - b;
     }
 }
 
 void ppmm::Filter::Multiply(float factor)
 {
     for (int i = 0; i < m_ImageSize; i += m_ImageFormat) {
-        float rl = (float)m_Image[i + 0] / 255.0;
-        float gl = (float)m_Image[i + 1] / 255.0;
-        float bl = (float)m_Image[i + 2] / 255.0;
+        float rl = (float)m_Image[i + 0] / m_ImageDepth;
+        float gl = (float)m_Image[i + 1] / m_ImageDepth;
+        float bl = (float)m_Image[i + 2] / m_ImageDepth;
 
         rl *= factor; if (rl > 1.0) rl = 1.0;
         gl *= factor; if (gl > 1.0) gl = 1.0;
         bl *= factor; if (bl > 1.0) bl = 1.0;
 
-        m_Image[i + 0] = (unsigned char)(rl*255);
-        m_Image[i + 1] = (unsigned char)(gl*255);
-        m_Image[i + 2] = (unsigned char)(bl*255);
+        m_Image[i + 0] = (unsigned char)(rl*m_ImageDepth);
+        m_Image[i + 1] = (unsigned char)(gl*m_ImageDepth);
+        m_Image[i + 2] = (unsigned char)(bl*m_ImageDepth);
     }
 }
 
 void ppmm::Filter::Multiply(float r, float g, float b)
 {
     for (int i = 0; i < m_ImageSize; i += m_ImageFormat) {
-        float rl = (float)m_Image[i + 0] / 255.0;
-        float gl = (float)m_Image[i + 1] / 255.0;
-        float bl = (float)m_Image[i + 2] / 255.0;
+        float rl = (float)m_Image[i + 0] / m_ImageDepth;
+        float gl = (float)m_Image[i + 1] / m_ImageDepth;
+        float bl = (float)m_Image[i + 2] / m_ImageDepth;
 
         rl *= r; if (rl > 1.0) rl = 1.0;
         gl *= g; if (gl > 1.0) gl = 1.0;
         bl *= b; if (bl > 1.0) bl = 1.0;
 
-        m_Image[i + 0] = (unsigned char)(rl*255);
-        m_Image[i + 1] = (unsigned char)(gl*255);
-        m_Image[i + 2] = (unsigned char)(bl*255);
+        m_Image[i + 0] = (unsigned char)(rl*m_ImageDepth);
+        m_Image[i + 1] = (unsigned char)(gl*m_ImageDepth);
+        m_Image[i + 2] = (unsigned char)(bl*m_ImageDepth);
     }
 }
 
@@ -239,7 +241,7 @@ bool ppmm::RLECompression::WriteToFile(Image &img, const std::string &filepath)
     // Write PPM header
     ofs << "P3" << std::endl
         << width << " " << img.GetHeight() << std::endl
-        << "255" << std::endl;
+        << img.GetDepth() << std::endl;
 
     // Perform RLE
     unsigned char cur = img[0];
