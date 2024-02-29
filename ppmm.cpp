@@ -1,6 +1,7 @@
 #include "ppmm.h"
 
 #include <iostream>
+#include <iomanip>
 #include <fstream>
 #include <string>
 #include <cstdlib>
@@ -17,9 +18,8 @@ ppmm::Image::Image(const std::string &filepath)
     }
 
     // Check PPM magic
-    char magic_cstr[3] = { 0 };
-    ifs.read(magic_cstr, 2);
-    std::string magic(magic_cstr);
+    std::string magic;
+    ifs >> std::setw(2) >> magic;
 
     if (magic != "P3") {
         return;
@@ -283,9 +283,8 @@ bool ppmm::RLECompression::ReadFromFile(const std::string &filepath, Image &img)
     }
 
     // Check PPM magic
-    char magic_cstr[3] = { 0 };
-    ifs.read(magic_cstr, 2);
-    std::string magic(magic_cstr);
+    std::string magic;
+    ifs >> std::setw(2) >> magic;
 
     if (magic != "P3") {
         return false;
