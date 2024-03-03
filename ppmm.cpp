@@ -274,7 +274,7 @@ bool ppmm::RLECompression::WriteToFile(Image &img, const std::string &filepath)
 
     ofs << count << " " << (int)cur;
 
-    ofs.close()
+    ofs.close();
 
     return true;
 }
